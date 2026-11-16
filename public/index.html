@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>andypii_ · ♡</title>
+<meta name="description" content="andypii_ — me dicen andy. En directo en Twitch.">
+<meta property="og:title" content="andypii_ · ♡">
+<meta property="og:description" content="me dicen andy ♡ — en directo en twitch.tv/andypii_">
+<meta name="theme-color" content="#0a0406">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="music.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&family=Playfair+Display:ital,wght@1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink: #0a0406;
+    --malva: #180509;
+    --pink: #ff1533;
+    --pink-soft: #ff6e82;
+    --lilac: #d46a85;
+    --deep: #8e1e3f;
+    --white: #fff4f6;
+
+    --line: color-mix(in srgb, var(--pink) 20%, transparent);
+    --line-strong: color-mix(in srgb, var(--pink) 45%, transparent);
+    --grid-line: color-mix(in srgb, var(--pink) 9%, transparent);
+    --glow: 0 0 12px color-mix(in srgb, var(--pink) 80%, transparent), 0 0 32px color-mix(in srgb, var(--pink) 35%, transparent);
+    --glow-soft: 0 0 16px color-mix(in srgb, var(--pink) 45%, transparent);
+
+    --font-display: 'Rubik Glitch', cursive;
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ background: var(--ink); }
+
+  body{
+    margin: 0;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 1.15rem 3rem;
+    font-family: var(--font-sans);
+    color: var(--white);
+    background-color: var(--ink);
+    background-image:
+      radial-gradient(ellipse 78% 46% at 50% -6%, color-mix(in srgb, var(--deep) 70%, transparent) 0%, transparent 72%),
+      radial-gradient(ellipse 62% 34% at 50% 34%, color-mix(in srgb, var(--pink) 13%, transparent) 0%, transparent 70%),
+      radial-gradient(ellipse 110% 46% at 50% 112%, color-mix(in srgb, var(--deep) 34%, transparent) 0%, transparent 72%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- fondo: rejilla y partículas ---------- */
+  .grid-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(ellipse 72% 62% at 50% 42%, #000 0%, transparent 88%);
+    mask-image: radial-gradient(ellipse 72% 62% at 50% 42%, #000 0%, transparent 88%);
+  }
+
+  .spark-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .cursor-star{
+    position: absolute;
+    width: var(--star-size);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    color: var(--star-color);
+    filter: drop-shadow(0 0 5px currentColor);
+    animation: cursor-spark .65s ease-out both;
+  }
+
+  .cursor-star::before{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: currentColor;
+    clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%);
+  }
+
+  @keyframes cursor-spark{
+    from{ transform: rotate(var(--star-turn)); opacity: .95; }
+    to{ transform: translate(var(--star-drift), 19px) rotate(calc(var(--star-turn) + 65deg)) scale(.15); opacity: 0; }
+  }
+
+  .spark{
+    position: absolute;
+    border-radius: 1px;
+    background: var(--pink);
+    box-shadow: 0 0 7px color-mix(in srgb, var(--pink) 90%, transparent);
+    opacity: 0;
+    animation-name: twinkle;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes twinkle{
+    0%, 100%{ opacity: 0; transform: scale(.6); }
+    45%{ opacity: .9; transform: scale(1); }
+    60%{ opacity: .35; }
+  }
+
+  /* ---------- columna ---------- */
+  .wrap{
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 25rem;
+    text-align: center;
+  }
+
+  /* ---------- avatar ---------- */
+  .avatar{
+    position: relative;
+    width: clamp(8.5rem, 30vw, 10.5rem);
+    aspect-ratio: 1;
+    margin: 0 auto;
+  }
+
+  .avatar-svg{
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 9999px;
+    box-shadow:
+      0 0 0 1px var(--line-strong),
+      0 0 26px color-mix(in srgb, var(--pink) 45%, transparent),
+      0 0 64px color-mix(in srgb, var(--pink) 18%, transparent);
+  }
+
+  .avatar-img{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 9999px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity .6s ease;
+    pointer-events: none;
+  }
+
+  .avatar-img.is-loaded{ opacity: 1; }
+
+  .avatar.has-photo .avatar-letter{ display: none; }
+
+  .avatar-letter{
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-bottom: .3rem;
+    font-family: var(--font-display);
+    font-size: clamp(3.8rem, 16vw, 5rem);
+    line-height: 1;
+    color: var(--white);
+    text-shadow:
+      0 0 16px color-mix(in srgb, var(--pink) 85%, transparent),
+      0 0 44px color-mix(in srgb, var(--pink) 45%, transparent);
+    pointer-events: none;
+  }
+
+  .avatar-heart{
+    position: absolute;
+    left: 50%;
+    bottom: -0.5rem;
+    translate: -50% 0;
+    display: grid;
+    place-items: center;
+    width: 1.95rem;
+    height: 1.95rem;
+    border-radius: 9999px;
+    background: var(--malva);
+    box-shadow: 0 0 0 1px var(--line), var(--glow-soft);
+  }
+
+  .avatar-heart svg{
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: var(--pink);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--pink) 80%, transparent));
+  }
+
+  /* ---------- nombre ---------- */
+  .name{
+    position: relative;
+    display: inline-block;
+    margin: 1.5rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 10vw, 2.75rem);
+    line-height: 1.05;
+    letter-spacing: .015em;
+    color: var(--white);
+    text-shadow:
+      0 0 18px color-mix(in srgb, var(--pink) 70%, transparent),
+      0 0 46px color-mix(in srgb, var(--pink) 28%, transparent);
+    animation: flicker 11s infinite;
+  }
+
+  .name::before,
+  .name::after{
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  .name::before{
+    color: var(--deep);
+    transform: translate(-1.5px, 1px);
+    clip-path: inset(0 0 58% 0);
+    opacity: .85;
+  }
+
+  .name::after{
+    color: var(--pink-soft);
+    transform: translate(1.5px, -1px);
+    clip-path: inset(52% 0 0 0);
+    opacity: .55;
+  }
+
+  @keyframes flicker{
+    0%, 91%, 100%{ opacity: 1; }
+    92%{ opacity: .68; }
+    93%{ opacity: 1; }
+    96%{ opacity: .86; }
+    97%{ opacity: 1; }
+  }
+
+  .tagline{
+    margin: .55rem 0 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.05rem, 4.2vw, 1.3rem);
+    color: var(--pink-soft);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--pink) 30%, transparent);
+  }
+
+  /* ---------- esquinas ---------- */
+  .corners{
+    --corner-color: var(--line-strong);
+    background-image:
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color)),
+      linear-gradient(var(--corner-color), var(--corner-color));
+    background-repeat: no-repeat;
+    background-size:
+      .8rem 1px, 1px .8rem,
+      .8rem 1px, 1px .8rem,
+      .8rem 1px, 1px .8rem,
+      .8rem 1px, 1px .8rem;
+    background-position:
+      0 0, 0 0,
+      100% 0, 100% 0,
+      0 100%, 0 100%,
+      100% 100%, 100% 100%;
+  }
+
+  /* ---------- tarjeta en directo ---------- */
+  .live{
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: .8rem .95rem;
+    border: 1px solid var(--line-strong);
+    border-radius: .85rem;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    background:
+      linear-gradient(100deg,
+        color-mix(in srgb, var(--malva) 94%, transparent) 0%,
+        color-mix(in srgb, var(--pink) 11%, var(--ink)) 100%);
+    box-shadow:
+      0 0 26px color-mix(in srgb, var(--pink) 13%, transparent),
+      inset 0 0 34px color-mix(in srgb, var(--pink) 6%, transparent);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+
+  .live:hover,
+  .live:focus-visible{
+    border-color: var(--pink);
+    box-shadow:
+      0 0 30px color-mix(in srgb, var(--pink) 30%, transparent),
+      inset 0 0 34px color-mix(in srgb, var(--pink) 10%, transparent);
+    transform: translateY(-1px);
+  }
+
+  .live-icon{
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: .55rem;
+    background: color-mix(in srgb, var(--pink) 12%, transparent);
+    color: var(--pink);
+    box-shadow: inset 0 0 14px color-mix(in srgb, var(--pink) 18%, transparent);
+  }
+
+  .live-icon svg{
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pink) 65%, transparent));
+  }
+
+  .live-text{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .live-top{
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    font-size: .92rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  .pill-live{
+    display: none;
+    padding: .12rem .38rem;
+    border-radius: .22rem;
+    background: var(--pink);
+    color: #fff;
+    font-size: .55rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: var(--glow-soft);
+  }
+
+  .live-sub{
+    margin-top: .12rem;
+    font-size: .78rem;
+    color: var(--lilac);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .live-chevron{
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+    stroke: var(--lilac);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .25s ease, stroke .25s ease;
+  }
+
+  .live:hover .live-chevron,
+  .live:focus-visible .live-chevron{
+    stroke: var(--pink);
+    transform: translateX(3px);
+  }
+
+  /* ---------- estado del directo ---------- */
+  body.live .pill-live{ display: inline-block; }
+
+  body.live .social-tag{ display: inline-block; }
+
+  body.live .live-icon svg{
+    animation: livePulse 2.6s ease-in-out infinite;
+  }
+
+  @keyframes livePulse{
+    0%, 100%{ filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pink) 60%, transparent)); }
+    50%{ filter: drop-shadow(0 0 13px color-mix(in srgb, var(--pink) 95%, transparent)); }
+  }
+
+  body.offline .live{
+    border-color: var(--line);
+    background: linear-gradient(100deg,
+      color-mix(in srgb, var(--malva) 96%, transparent) 0%,
+      color-mix(in srgb, var(--deep) 10%, var(--ink)) 100%);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--pink) 6%, transparent);
+  }
+
+  body.offline .live-icon{
+    color: var(--lilac);
+    background: color-mix(in srgb, var(--pink) 6%, transparent);
+    box-shadow: none;
+  }
+
+  body.offline .live-icon svg{ filter: none; }
+
+  body.offline .live-top{ color: var(--lilac); }
+
+  body.offline .live-chevron{ stroke: color-mix(in srgb, var(--lilac) 65%, transparent); }
+
+  /* ---------- marquesina ---------- */
+  .marquee{
+    position: relative;
+    margin-top: 1.7rem;
+    padding: .5rem 0;
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  }
+
+  .marquee-track{
+    display: flex;
+    width: max-content;
+    animation: slide 26s linear infinite;
+  }
+
+  .marquee-track span{
+    padding-right: 2.2rem;
+    font-family: var(--font-mono);
+    font-size: .66rem;
+    letter-spacing: .2em;
+    color: color-mix(in srgb, var(--pink-soft) 78%, transparent);
+    white-space: nowrap;
+  }
+
+  @keyframes slide{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
+  }
+
+  /* ---------- redes ---------- */
+  .socials{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.9rem;
+    margin-top: 2.1rem;
+  }
+
+  .social{
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    color: var(--pink);
+    filter: drop-shadow(0 0 9px color-mix(in srgb, var(--pink) 55%, transparent));
+    transition: color .2s ease, transform .2s ease, filter .2s ease;
+  }
+
+  .social svg{
+    width: 1.65rem;
+    height: 1.65rem;
+    fill: currentColor;
+  }
+
+  .social svg.is-stroke{ fill: none; }
+
+  .social:hover,
+  .social:focus-visible{
+    color: var(--pink-soft);
+    transform: translateY(-3px);
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--pink) 80%, transparent));
+  }
+
+  .social-tag{
+    position: absolute;
+    display: none;
+    top: -.85rem;
+    left: 50%;
+    translate: -50% 0;
+    padding: .08rem .26rem;
+    border-radius: .18rem;
+    background: var(--pink);
+    color: #fff;
+    font-size: .44rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    line-height: 1.3;
+    filter: none;
+  }
+
+  /* ---------- visitas ---------- */
+  .views{
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    margin-top: 2.3rem;
+    padding: .5rem 1rem;
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--pink-soft);
+  }
+
+  .views svg{
+    width: .95rem;
+    height: .95rem;
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--pink) 70%, transparent));
+  }
+
+  .views b{
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: .1em;
+  }
+
+  .views[hidden]{ display: none; }
+
+  .music{
+    margin-top: 2rem;
+    padding: .75rem;
+    border: 1px solid var(--line);
+    background-color: color-mix(in srgb, var(--malva) 85%, transparent);
+    text-align: left;
+  }
+
+  .music-controls{
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) minmax(3.6rem, 5.5rem);
+    gap: clamp(.45rem, 2vw, .85rem);
+    align-items: center;
+  }
+
+  .music-toggle{
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--line-strong);
+    color: var(--pink-soft);
+    background: var(--ink);
+    transition: color .2s, border-color .2s, box-shadow .2s;
+  }
+
+  .music-toggle svg{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    padding: .13rem;
+    fill: currentColor;
+    background: var(--ink);
+  }
+
+  .music-toggle svg[hidden], .music-toggle:disabled svg{ display: none; }
+
+  .music-toggle:not(:disabled):hover{
+    color: var(--white);
+    border-color: var(--pink);
+    box-shadow: var(--glow-soft);
+  }
+
+  .music-volume:disabled{ opacity: .5; }
+  .music-toggle:focus-visible, .music-volume:focus-visible{
+    outline: 2px solid var(--pink-soft);
+    outline-offset: 3px;
+  }
+
+  .music-track{
+    color: var(--white);
+    font-size: .84rem;
+    line-height: 1.25;
+  }
+
+  .music-track:hover{ color: var(--pink-soft); }
+
+  .music-track span{
+    display: block;
+    margin-top: .2rem;
+    color: var(--pink-soft);
+    font-family: var(--font-mono);
+    font-size: .66rem;
+  }
+
+  .music-volume{
+    --volume-level: 35%;
+    appearance: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 1.5rem;
+    margin: 0;
+    background: linear-gradient(to right,
+      var(--pink) 0, var(--pink-soft) var(--volume-level),
+      var(--line) var(--volume-level), var(--line) 100%) center / 100% 4px no-repeat;
+  }
+
+  .music-volume::-webkit-slider-thumb{
+    appearance: none;
+    width: .7rem;
+    height: .7rem;
+    border: 1px solid var(--pink-soft);
+    background: var(--pink);
+    box-shadow: var(--glow-soft);
+  }
+
+  .music-volume::-moz-range-thumb{
+    width: .7rem;
+    height: .7rem;
+    border: 1px solid var(--pink-soft);
+    border-radius: 0;
+    background: var(--pink);
+    box-shadow: var(--glow-soft);
+  }
+
+  .music-volume:not(:disabled){ cursor: pointer; }
+
+  .music-cover{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .music-status{
+    margin: .65rem 0 0;
+    color: var(--pink-soft);
+    font-size: .77rem;
+  }
+
+  /* ---------- texto lateral ---------- */
+  .side-text{
+    position: fixed;
+    right: .45rem;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 2;
+    writing-mode: vertical-rl;
+    font-family: var(--font-mono);
+    font-size: .56rem;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--pink) 50%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  a:focus-visible{
+    outline: 2px solid var(--pink);
+    outline-offset: 5px;
+    border-radius: .35rem;
+  }
+
+  @media (max-width: 359px){
+    .side-text{ display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor-star{ display: none; }
+    *, *::before, *::after{
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+<meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYzMCIgdmlld0JveD0iMCAwIDEyMDAgNjMwIj48cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI2MzAiIGZpbGw9IiNGRkZERjkiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Im9sY2FyZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGNzE1MiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0YwM0UxQSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjUyOCIgeT0iMTkwIiB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgcng9IjM0IiBmaWxsPSJ1cmwoI29sY2FyZCkiLz48dGV4dCB4PSI2MDAiIHk9IjI2MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiIGZvbnQtZmFtaWx5PSJJbnRlciwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNzAwIiBmb250LXNpemU9IjcyIiBmaWxsPSIjZmZmZmZmIj5BPC90ZXh0Pjx0ZXh0IHg9IjYwMCIgeT0iNDMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iSW50ZXIsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjgwMCIgZm9udC1zaXplPSI1NiIgZmlsbD0iIzBCMEIwQyI+YW5keXBpaV8gwrcg4pmhPC90ZXh0Pjwvc3ZnPg==" /><meta name="twitter:card" content="summary_large_image" /><meta property="og:type" content="website" /><link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJBIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Im9sbWFyayIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGNzE1MiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0YwM0UxQSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgcng9IjE1IiBmaWxsPSJ1cmwoI29sbWFyaykiLz48cmVjdCB4PSIzIiB5PSIzIiB3aWR0aD0iNTgiIGhlaWdodD0iNTgiIHJ4PSIxMi41IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjE2Ii8+PHRleHQgeD0iMzIiIHk9IjMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9IkludGVyLCB1aS1zYW5zLXNlcmlmLCBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9IiNmZmZmZmYiPkE8L3RleHQ+PC9zdmc+" /></head>
+<body>
+
+<div class="grid-layer" aria-hidden="true"></div>
+<div class="spark-layer" data-sparks aria-hidden="true">
+  <div data-cursor-trail></div>
+</div>
+<div class="side-text" aria-hidden="true">andypii_ ✦ soft-glitch ✦ luv ✦ twitch</div>
+
+<main class="wrap">
+
+  <div class="avatar">
+    <svg class="avatar-svg" viewBox="0 0 200 200" aria-hidden="true">
+      <defs>
+        <radialGradient id="avBg" cx="34%" cy="16%" r="94%">
+          <stop offset="0%" style="stop-color:var(--pink);stop-opacity:.55"/>
+          <stop offset="46%" style="stop-color:var(--deep);stop-opacity:.9"/>
+          <stop offset="100%" style="stop-color:var(--ink);stop-opacity:1"/>
+        </radialGradient>
+      </defs>
+      <rect width="200" height="200" fill="url(#avBg)"/>
+      <g style="fill:var(--pink);opacity:.85">
+        <circle cx="150" cy="56" r="2.2"/>
+        <circle cx="48" cy="70" r="1.6"/>
+        <circle cx="146" cy="126" r="1.4"/>
+      </g>
+      <g style="fill:var(--pink);opacity:.18">
+        <rect x="0" y="134" width="200" height="2"/>
+        <rect x="0" y="143" width="112" height="1.5"/>
+      </g>
+    </svg>
+    <img class="avatar-img" src="https://unavatar.io/x/DrPepperFanxd" alt="Foto de perfil de andypii_" referrerpolicy="no-referrer">
+    <span class="avatar-letter" aria-hidden="true">A</span>
+    <span class="avatar-heart" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    </span>
+  </div>
+
+  <h1 class="name" data-text="Andypii_">Andypii_</h1>
+  <p class="tagline">me dicen andy ♡</p>
+
+  <a class="live" href="https://www.twitch.tv/andypii_" target="_blank" rel="noopener" data-live-card>
+    <span class="live-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+    </span>
+    <span class="live-text">
+      <span class="live-top"><span data-live-title>twitch</span> <span class="pill-live">live</span></span>
+      <span class="live-sub" data-live-sub>pásate al canal ♡</span>
+    </span>
+    <svg class="live-chevron" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+  </a>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>✦ me dicen andy ✦ ♡ ∴ sabritas moradas ∴ ♡ ✦ luv u ✦ ♡ ∴ andypii_ ∴ ♡</span>
+      <span>✦ me dicen andy ✦ ♡ ∴ sabritas moradas ∴ ♡ ✦ luv u ✦ ♡ ∴ andypii_ ∴ ♡</span>
+    </div>
+  </div>
+
+  <nav class="socials" aria-label="Redes de andypii_">
+    <a class="social" href="https://www.twitch.tv/andypii_" target="_blank" rel="noopener" aria-label="Twitch de andypii_">
+      <span class="social-tag" aria-hidden="true">LIVE</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+    </a>
+    <a class="social" href="https://x.com/intent/follow?screen_name=DrPepperFanxd" target="_blank" rel="noopener" aria-label="Seguir a andypii_ en X">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+    </a>
+    <a class="social" href="https://www.tiktok.com/@_andypii" target="_blank" rel="noopener" aria-label="TikTok de andypii_">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+    </a>
+    <a class="social" href="https://www.instagram.com/drpepperenjoyer_/" target="_blank" rel="noopener" aria-label="Instagram de andypii_">
+      <svg class="is-stroke" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.4"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1.15" fill="currentColor" stroke="none"/></svg>
+    </a>
+  </nav>
+
+  <div class="views corners" data-views hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3.2"/></svg>
+    <span><b data-views-count></b> <span data-views-label>espectadores</span></span>
+  </div>
+
+  <section class="music corners" aria-label="Música" data-music-source="promise-reprise.mp3">
+    <div class="music-controls">
+      <button class="music-toggle" type="button" aria-label="Reproducir música" data-music-toggle disabled>
+        <img class="music-cover" src="promise-reprise.png" width="44" height="44" alt="">
+        <svg viewBox="0 0 24 24" aria-hidden="true" data-music-play><path d="M8 4.5v15l12-7.5z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" data-music-pause hidden><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+      </button>
+      <a class="music-track" href="https://www.youtube.com/watch?v=ZwLvcaDMhU8" target="_blank" rel="noopener">
+        Promise (Reprise)<span>Akira Yamaoka</span>
+      </a>
+      <input class="music-volume" type="range" min="0" max="100" value="35" aria-label="Volumen de la música" data-music-volume disabled>
+    </div>
+    <p class="music-status" data-music-status role="status" hidden></p>
+  </section>
+
+</main>
+
+<script>
+  // Foto del avatar: sale de su perfil de X y cambia cuando ella la cambie
+  (function () {
+    var avatar = document.querySelector('.avatar');
+    var img = document.querySelector('.avatar-img');
+    if (!avatar || !img) return;
+    function show() {
+      img.classList.add('is-loaded');
+      avatar.classList.add('has-photo');
+    }
+    img.addEventListener('load', show);
+    img.addEventListener('error', function () { img.remove(); });
+    if (img.complete && img.naturalWidth > 0) show();
+  })();
+
+  // Estado del directo y espectadores de Twitch. Se actualizan cada minuto.
+  (function () {
+    var card = document.querySelector('[data-live-card]');
+    var views = document.querySelector('[data-views]');
+    if (!card || !views) return;
+    var title = card.querySelector('[data-live-title]');
+    var sub = card.querySelector('[data-live-sub]');
+    var count = views.querySelector('[data-views-count]');
+    var label = views.querySelector('[data-views-label]');
+    var body = document.body;
+
+    function setLive(game, viewers) {
+      if (!Number.isSafeInteger(viewers) || viewers < 0) throw new Error('espectadores inválidos');
+      body.classList.add('live');
+      body.classList.remove('offline');
+      if (title) title.textContent = 'en directo';
+      if (sub) sub.textContent = game ? 'jugando ' + game + ' ♡' : 'en vivo ahora ♡';
+      count.textContent = viewers.toLocaleString('es-MX');
+      label.textContent = viewers === 1 ? 'espectador' : 'espectadores';
+      views.hidden = false;
+    }
+
+    function setOffline() {
+      body.classList.add('offline');
+      body.classList.remove('live');
+      if (title) title.textContent = 'offline';
+      if (sub) sub.textContent = 'vuelve pronto ♡';
+      views.hidden = true;
+    }
+
+    async function askTwitch() {
+      var query = '{ user(login:"andypii_"){ stream { viewersCount game { name } } } }';
+      var response = await fetch('https://gql.twitch.tv/gql', {
+        method: 'POST',
+        headers: { 'Client-ID': 'kimne78kx3ncx6brgo4mv6wki5h1ko', 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ query: query }),
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!response.ok) throw new Error('Twitch: ' + response.status);
+      var json = await response.json();
+      var stream = json?.data?.user?.stream;
+      if (stream === null) setOffline();
+      else if (stream) setLive(stream.game?.name, stream.viewersCount);
+      else throw new Error('Twitch: sin datos del directo');
+    }
+
+    async function askBackup() {
+      var response = await fetch('https://decapi.me/twitch/viewercount/andypii_', {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!response.ok) throw new Error('DecAPI: ' + response.status);
+      var result = (await response.text()).trim();
+      if (/^andypii_ is offline$/i.test(result)) setOffline();
+      else if (/^\d+$/.test(result)) setLive(null, Number(result));
+      else throw new Error('DecAPI: sin datos de espectadores');
+    }
+
+    function check() {
+      askTwitch().catch(function () {
+        askBackup().catch(function () { views.hidden = true; });
+      });
+    }
+
+    check();
+    setInterval(check, 60000);
+  })();
+
+  // Partículas del fondo
+  (function () {
+    var layer = document.querySelector('[data-sparks]');
+    if (!layer) return;
+    var small = window.matchMedia('(max-width: 480px)').matches;
+    var total = small ? 16 : 30;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'spark';
+      var size = (Math.random() * 2 + 1.4).toFixed(2);
+      dot.style.left = (Math.random() * 100).toFixed(2) + '%';
+      dot.style.top = (Math.random() * 100).toFixed(2) + '%';
+      dot.style.width = size + 'px';
+      dot.style.height = size + 'px';
+      dot.style.animationDuration = (5 + Math.random() * 7).toFixed(2) + 's';
+      dot.style.animationDelay = (-Math.random() * 9).toFixed(2) + 's';
+      frag.appendChild(dot);
+    }
+    layer.appendChild(frag);
+  })();
+
+  (() => {
+    const trail = document.querySelector('[data-cursor-trail]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let lastSpark = -Infinity;
+
+    function leaveStar(point) {
+      const now = performance.now();
+      if (!point || reducedMotion.matches || now - lastSpark < 22) return;
+      lastSpark = now;
+
+      const star = document.createElement('span');
+      star.className = 'cursor-star';
+      star.style.left = (point.clientX + Math.random() * 12 - 6) + 'px';
+      star.style.top = (point.clientY + Math.random() * 12 - 6) + 'px';
+      star.style.setProperty('--star-size', (6 + Math.random() * 10) + 'px');
+      star.style.setProperty('--star-turn', Math.random() * 90 + 'deg');
+      star.style.setProperty('--star-drift', (Math.random() * 22 - 11) + 'px');
+      star.style.setProperty('--star-color', Math.random() < .5 ? 'var(--pink)' : 'var(--pink-soft)');
+      star.addEventListener('animationend', () => star.remove(), { once: true });
+      trail.append(star);
+    }
+
+    window.addEventListener('pointermove', event => {
+      if (event.pointerType !== 'touch') leaveStar(event);
+    }, { passive: true });
+    window.addEventListener('touchmove', event => leaveStar(event.touches[0]), { passive: true });
+    reducedMotion.addEventListener('change', () => trail.replaceChildren());
+  })();
+
+</script>
+</body>
+</html>
