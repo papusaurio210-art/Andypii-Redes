@@ -56,6 +56,7 @@
       nextStart = audio.currentTime + .03;
       scheduleTrack();
       scheduleTrack();
+      window.removeEventListener('pointerup', startOnGesture);
       updateButton();
     } finally {
       showStatus('');
@@ -75,6 +76,11 @@
     if (song) return;
     songLoad ??= loadSong().finally(() => { songLoad = null; });
     await songLoad;
+  }
+
+  function startOnGesture(event) {
+    if (!event.isTrusted || event.button !== 0 || toggle.contains(event.target)) return;
+    play().catch(() => {});
   }
 
   toggle.addEventListener('click', async () => {
@@ -105,7 +111,8 @@
     if (!response?.ok || response.headers.get('content-type')?.startsWith('text/html')) return;
     toggle.disabled = false;
     volume.disabled = false;
-    // Si el navegador exige un gesto, el botón sigue disponible para iniciar el audio.
+    // Si el navegador bloquea el arranque, el primer clic o toque reanuda el audio.
+    window.addEventListener('pointerup', startOnGesture, { passive: true });
     play().catch(() => {});
   }
 
